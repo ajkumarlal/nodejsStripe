@@ -1,34 +1,34 @@
 ﻿var express = require('express'),
     router = express.Router(),
-    //User = require('../models/user.js'),
-    //Product = require('../models/product.js'),
+    Customer = require('../models/customer.js'),
+    Reservation = require('../models/reservation.js'),
     config = require('../_config.js'),
     stripe = require('stripe')('sk_test_51aTG9iUrOMeaaxshvv6hgVe');
     //passport = require('passport');
 
 
-//router.get('/products', function (req, res) {
-//    return Product.find({}, function (err, data) {
-//        if (err) {
-//            return next(err);
-//        } else {
-//            return res.render('products', { products: data, user: req.user });
-//        }
-//    });
-//});
-
-router.get('/charge', function (req, res, next) {
-    // var productID = req.params.id;
-    return res.render('charge', { product: "ajay", user: "ajay" });
-
-    //return Product.findById(productID, function (err, data) {
-    //    if (err) {
-    //        if (err) { return next(err); }
-    //    } else {
-    //        return res.render('charge', { product: data, user: req.user });
-    //    }
-   
+router.get('/reservations', function (req, res) {
+    return Reservation.find({}, function (err, data) {
+        if (err) {
+            return next(err);
+        } else {
+            return res.render('Reservations', { reservations: data, user: req.user });
+        }
+    });
 });
+
+
+router.get('/charge/:id', function (req, res, next) {
+    var reservationID = req.params.id;
+    return Reservation.findById(reservationID, function (err, data) {
+        if (err) {
+            if (err) { return next(err); }
+        } else {
+            return res.render('charge', { reservation: data });
+        }
+    });
+});
+
 
 router.get('/stripe', function (req, res, next) {
     res.send("Scram!");
@@ -36,11 +36,28 @@ router.get('/stripe', function (req, res, next) {
 
 
 router.post('/stripe', function (req, res, next) {
+        
     // Obtain StripeToken
     var stripeToken = req.body.stripeToken;
-    //var userID = req.user._id;
+    var email = req.body.email;
+    var amount = req.body.productAmount;
     
-    //User.findById(userID, function (err, data) {
+    var data = new Customer(
+        {
+            email: email,
+            amount: amount
+        }
+    
+    );
+    
+   // var res = new reservations({ reservationID: req.body.productID, token: stripeToken });
+    
+    data.reservations.push({ reservationID: req.body.productID, token: stripeToken });
+
+    data.save();
+    
+    
+    //User.f(userID, function (err, data) {
     //    if (err) { return next(err); }
     //    data.products.push({ productID: req.body.productID, token: stripeToken });
     //    data.save();

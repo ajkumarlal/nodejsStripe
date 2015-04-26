@@ -1,0 +1,33 @@
+﻿{% extends '_base.html' %}
+
+{% block title %}{% endblock %}
+
+
+{% block content %}
+
+<div class="container">
+    <h1>Reservation List</h1>
+    <p class="lead">Which would you like to pay for?</p>
+    <a href="/">Go home</a>
+    <br><br>
+    <table class="table table-hover" style="max-width:400px;">
+        <thead>
+            <tr>
+                <th>Reservation Name</th>
+                <th>Pay Amount</th>
+                <th>Customer Email</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for reservation in reservations %}
+            <tr>
+                <td><a href="/charge/{{reservation._id.toString()}}">{{ reservation.reservation }}</a></td>
+                <td>${{ reservation.amount }}</td>
+                <td>${{ reservation.customeremail }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+{% endblock %}
